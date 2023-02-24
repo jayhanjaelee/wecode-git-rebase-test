@@ -1,11 +1,11 @@
-require('dotenv').config();
+require('dotenv').config()
 
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
+const express = require('express')
+const cors = require('cors')
+const morgan = require('morgan')
 const { DataSource } = require('typeorm')
 
-const app = express();
+const app = express()
 const appDataSource = new DataSource({
   type: process.env.DB_TYPE,
   host: process.env.DB_HOST,
@@ -15,14 +15,14 @@ const appDataSource = new DataSource({
   database: process.env.DB_DATABASE
 })
 
-app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json());
+app.use(cors())
+app.use(morgan('dev'))
+app.use(express.json())
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8000
 
 app.get('/ping', (req, res) => {
-  res.json({ messgae: 'pong' });
+  res.json({ messgae: 'pong' })
 })
 
 /*
@@ -31,7 +31,29 @@ app.get('/ping', (req, res) => {
 feature/signin 브랜치의 경우 app.post('/users/signin', ...)
 feature/signup 브랜치의 경우 app.post('/users/signup', ...)
 */
+// 예시 코드
+app.post('/users/signin', async (req, res) => {
+  const { email, password } = req.body
+  const user = await appDataSource.query(`
+    SELECT
+      users.id
+      users.password
+    FROM
+      users
+    WHERE
+      users.email = ?
+  `, [email])
 
+  if (!user) {
+    return res.json({ message: "SIGNUP_REQUIRED" })
+  };
+
+  if (!(user[0].password === password)) {
+    return res.json({ message: "INVALID_PASSWORD" })
+  };
+
+  return res.json({ userId: user.id })
+})
 
 app.listen(PORT, () => {
   appDataSource.initialize()
@@ -39,5 +61,5 @@ app.listen(PORT, () => {
       console.log("DB Connection has been initialized")
     })
 
-  console.log(`Listening to request on localhost:${PORT}`);
+  console.log(`Listening to request on localhost:${PORT}`)
 })
