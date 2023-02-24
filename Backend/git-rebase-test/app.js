@@ -1,11 +1,11 @@
-require('dotenv').config();
+require('dotenv').config()
 
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
+const express = require('express')
+const cors = require('cors')
+const morgan = require('morgan')
 const { DataSource } = require('typeorm')
 
-const app = express();
+const app = express()
 const appDataSource = new DataSource({
   type: process.env.DB_TYPE,
   host: process.env.DB_HOST,
@@ -15,14 +15,14 @@ const appDataSource = new DataSource({
   database: process.env.DB_DATABASE
 })
 
-app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json());
+app.use(cors())
+app.use(morgan('dev'))
+app.use(express.json())
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8000
 
 app.get('/ping', (req, res) => {
-  res.json({ messgae: 'pong' });
+  res.json({ messgae: 'pong' })
 })
 
 /*
@@ -38,6 +38,9 @@ app.listen(PORT, () => {
     .then(() => {
       console.log("DB Connection has been initialized")
     })
+    .catch(() => {
+      console.log("DB Connection has been failed")
+    })
 
-  console.log(`Listening to request on localhost:${PORT}`);
+  console.log(`Listening to request on localhost:${PORT}`)
 })
